@@ -5,6 +5,7 @@
 The add-on classifies:
 
 - `vyos:netfilter` for kernel firewall records such as `kernel: [ipv4-NAME-900000-A]IN=... SRC=... DST=...`
+- `vyos:kea:dhcp` for Kea DHCPv4, DHCPv6, and DHCP-DDNS logs
 - `vyos:syslog` for regular VyOS daemon logs such as `bgpd[2622]: ...`
 
 ## Why this exists
@@ -28,7 +29,33 @@ For `vyos:netfilter`:
 - `action_code`
 - `action`
 - `IN`, `OUT`, `SRC`, `DST`, `PROTO`, `SPT`, `DPT`, `TTL`, `LEN`
+- `tcp_flag`
+- `ip_flag`
 - Aliases: `src`, `dest`, `src_port`, `dest_port`, `transport`, `inbound_interface`, `outbound_interface`
+
+For `vyos:kea:dhcp`:
+
+- `process`
+- `pid`
+- `kea_time`
+- `log_level`
+- `kea_logger`
+- `kea_pid`
+- `kea_thread`
+- `kea_message_id`
+- `kea_message`
+- `dhcp_version`
+- `action`
+- `hwtype`
+- `mac`
+- `client_id`
+- `transaction_id`
+- `dhcp_message`
+- `dhcp_message_type`
+- `src`, `src_port`, `dest`, `dest_port`, `interface`
+- `lease_ip`, `lease_action`, `lease_duration`
+- `request_id`, `ddns_change_type`, `ddns_change_type_num`
+- `ddns_detail_key`, `ddns_detail_value`
 
 For `vyos:syslog`:
 
@@ -38,6 +65,10 @@ For `vyos:syslog`:
 - `vyos_host`
 - `process`
 - `pid`
+- `log_level`
+- `daemon_message_id`
+- `daemon_message`
+- quoted key/value pairs from structured daemon logs, such as PowerDNS Recursor `msg`, `subsystem`, `prio`, `qname`, and `remote`
 
 ## Installation
 
@@ -74,6 +105,11 @@ index=security sourcetype=vyos:netfilter
 ```
 
 ```spl
+index=security sourcetype=vyos:kea:dhcp
+| stats count by process kea_logger kea_message_id action
+```
+
+```spl
 index=security sourcetype=vyos:syslog process=bgpd
 | table _time host process pid _raw
 ```
@@ -82,7 +118,7 @@ index=security sourcetype=vyos:syslog process=bgpd
 
 - Existing indexed events keep their old sourcetype. Sourcetype rewriting applies to new events after installation.
 - The TA is intentionally small and does not claim complete CIM compliance yet.
-- Logs were modeled from VyOS syslog shaped like Linux netfilter firewall logs and FRR/BGP daemon messages.
+- Logs were modeled from VyOS syslog shaped like Linux netfilter firewall logs, Kea DHCP/DDNS logs, PowerDNS Recursor structured logs, and FRR/BGP daemon messages.
 
 ## Development
 
