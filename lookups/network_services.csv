@@ -1,0 +1,11 @@
+DPT,PROTO,service
+22,TCP,ssh
+25,TCP,smtp
+53,TCP,dns
+53,UDP,dns
+80,TCP,http
+123,UDP,ntp
+443,TCP,https
+443,UDP,quic
+587,TCP,submission
+853,TCP,dns-over-tls
